@@ -259,7 +259,7 @@
 
     ```python
     # todo_app/urls.py
-    
+
     from django.urls import path
     from . import views  # 追加
 
@@ -268,4 +268,9 @@
     urlpatterns = [
         path('', views.index, name='index'),  # 追加
     ]
+    ```
+    ここでコミット。
+    ```sh
+    git add .
+    git commit -m "todo_app/urls.py作成"
     ```
