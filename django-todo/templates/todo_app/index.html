@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+    {% if all_items %}
+        {% for things in all_items %}
+        <tr>
+            <td>{{ things.item }}</td>
+        </tr>    
+        {% endfor %}
+    {% endif %}
+{% endblock content %}

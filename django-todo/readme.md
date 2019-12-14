@@ -338,4 +338,58 @@
     - todoの完了(cross_off)
     - todoの完了取り消し(uncross)
     - todoの編集(edit)
+    これらを作っていく。
+    まずはindexをつくる。
+    ```python
+    # todo_app/views.py
+    
+    from django.shortcuts import render, redirect  # 追加
+    from .models import List
+
+    # Create your views here.
+
+
+    def index(request):
+        if request.method == 'GET':
+            all_items = List.objects.all()  # テーブルのアイテムを抜き出す.
+            params = {
+                'items': all_items
+            }
+            return render(request, 'todo_app/index.html', params)
+    ```
+    これで開発用サーバーを起動すると
+    ```
+    django.template.exceptions.TemplateDoesNotExist: todo_app/index.html
+    ```
+    となる。
+    表示するhtmlを作成する。
+6. 一覧画面を作成する
+    フロント側をつくっていく。
+    ```sh
+    mkdir static
+    cd static
+    mkdir css
+    mkdir js
+    mkdir ../ # 元のプロジェクト下に戻る
+    ```
+    bootstrapのファイルをダウンロードしてstatic/css, static/js下に入れる。
+    templates/base.htmlを作成してcss, jsを読み込ませる。
+    templates/todo_app/index.htmlを作成してbase.htmlをextendsして記述内容を分割する。
+    views.py/index はアイテムを全て集めてindex.htmlに投げる。
+    ```python
+    # todo_app/views.py
+    from django.shortcuts import render, redirect  # 追加
+    from .models import List
+
+    # Create your views here.
+
+
+    def index(request):
+        if request.method == 'GET':
+            all_items = List.objects.all()  # テーブルのアイテムを抜き出す.
+            params = {
+                'all_items': all_items
+            }
+            return render(request, 'todo_app/index.html', params)
+    ```
     
