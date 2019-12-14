@@ -323,6 +323,9 @@
             Apply all migrations: admin, auth, contenttypes, sessions, todo_app
         Running migrations:
             Applying todo_app.0001_initial... OK
+    
+    git add .
+    git commit -m "migrate done todo_app/List"
     ```
     これでデータの追加ができるようになった。
 
