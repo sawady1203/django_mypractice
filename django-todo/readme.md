@@ -190,8 +190,14 @@
 
 6. マイグレーションを行う。
     ```sh
-    python manage.py makemigration
-    pytho
+    python manage.py makemigrations # No changes
+    python manage.py migrate
+    ```
+    migrateしたことで管理用ユーザー用のテーブルがsettings.pyのdefaultで登録したデータベースに作成された。
+    python manage.py makemigrationsをしたタイミングで必ずコミットしておく。
+    ```sh
+    git add .
+    git commit -m "first migrate"
     ```
 
 7. 管理ユーザーを作成する。
