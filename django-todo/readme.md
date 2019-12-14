@@ -203,7 +203,21 @@
 7. 管理ユーザーを作成する。
    管理ユーザーを登録して管理画面にログインする。 
     ```sh
-    python manage.py createsuperuser   
+    # 管理者ユーザーIDとパスワードを入力する。
+    # パスワードは表示されない。
+    # マイグレーションをせずに行うとエラーが発生する。
+    python manage.py createsuperuser
     ```
-    マイグレーションをせずに行うとエラーが発生する。
-    まずは
+    開発用サーバーを起動してhttp://127.0.0.1:8000/adminにアクセスする。
+    ```sh
+    python manage.py runserver
+    ```
+    createsuperuserで作成したIDとパスワードで管理用画面にログインできればOK。
+
+## Todoアプリを作っていく
+1. アプリケーションフォルダをつくる
+    ```sh
+    python manage.py startapp todo_app
+    git add .
+    git commit -m "startapp todo_app"
+    ```
