@@ -221,3 +221,51 @@
     git add .
     git commit -m "startapp todo_app"
     ```
+
+2. 作成したアプリケーションをsettigs.pyに登録する。
+    ```python
+    # Application definition
+
+    INSTALLED_APPS = [
+        'django.contrib.admin',
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.sessions',
+        'django.contrib.messages',
+        'django.contrib.staticfiles',
+        'todo_app'  # 追加
+    ]
+    ```
+3. todo_appにurl.pyを作成する。
+    ```sh
+    type nul > todo_app/urls.py
+    ```
+    config内のurls.pyにtodo_app/urls.pyへの分岐を追加する。
+
+    ```python
+    # config/urls.py
+
+    from django.contrib import admin
+    from django.urls import path, include # includeを追加
+
+    urlpatterns = [
+        path('admin/', admin.site.urls),
+        path('', include('todo_app.urls')),  # 追加
+    ]
+
+    ```
+
+    作成したtodo_app/urls.pyにviewへの分岐を記述する。
+
+    ```python
+    # todo_app/urls.py
+    
+    from django.urls import path
+    from . import views  # 追加
+
+    app_name = "todo_app"  # 追加
+
+    urlpatterns = [
+        path('', views.index, name='index'),  # 追加
+    ]
+    ```
