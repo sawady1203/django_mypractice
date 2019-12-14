@@ -21,4 +21,9 @@ app_name = "todo_app"  # 追加
 
 urlpatterns = [
     path('', views.index, name='index'),  # 追加
+    path('add/', views.add, name='add'),
+    path('delete/<list_id>', views.delete, name='delete'),
+    path('cross_off/<list_id>', views.cross_off, name='cross_off'),
+    path('uncross/<list_id>', views.uncross, name='uncross'),
+    path('edit/<list_id>', views.edit, name='edit'),
 ]

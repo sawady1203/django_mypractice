@@ -392,4 +392,124 @@
             }
             return render(request, 'todo_app/index.html', params)
     ```
+    templates/base.htmlはこんな感じ。
+    ```html
+    {% load static %}
+
+    <!DOCTYPE html>
+        <head>
+            <!-- Required meta tags -->
+            <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <title>ToDo</title>
+            <meta name="description" content="">
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+            <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+            <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+        </head>
+        <body>
+            <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+                <a class="navbar-brand" href="{% url 'todo_app:index' %}">Todo APP</a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navber" aria-controls="Navber" aria-expanded="false" aria-label="ナビゲーションの切替">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+                    <form class="form-inline my-2 my-lg-0" action="{% url 'todo_app:index' %}" method="POST">
+                        {% csrf_token %}
+                        <input class="form-control mr-sm-2" type="text" placeholder="New Item" aria-label="ADD" name='item'>
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Add</button>
+                    </form>
+                </div>
+            </nav>
+            <br>
+            <div class="container">
+                {% block content %}
+                {% endblock content %}
+            </div>
+            <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+            <script src="{% static 'js/bootstrap.js' %}"></script>
+        </body>
+    </html>
+    ```
+    templates/todo_app/index.htmlはこんな感じ。
+    ```html
+    {% extends "base.html" %}
+
+    {% load static %}
+
+    {% block content %}
+        {% if all_items %}
+        <table class="table table-bordered">
+            {% for things in all_items %}
+                {% if things.completed %}
+                    <tr class="table-secondary">
+                        <td class="striker"><a href="{% url 'todo:edit' %}">{{ things.item }}</a></td>
+                        <td class="text-center"><a href="{% url 'todo:uncross' things.id %}">元に戻す</a></td>
+                        <td class="text-center"><a href="{% url 'todo:delete things.id ' %}">削除</a></td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td><a href="{% url 'todo:edit' things.edit %}">thinigs.item</a></td>
+                        <td class="text-center"><a href="{% url 'todo:cross_off' things.id %}">完了</a></td>
+                        <td class="text-center"><a href="{% url 'todo:delete' things.id %}">削除</a></td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+        {% endif %}
+    {% endblock content %}
+    ```
+    main.cssを作成して文字に取り消し線をつける
+    ```css
+    .striker {
+        text-decoration: line-through;
+    }
+    ```
+    フロントはこれだけで済まし、view.pyに処理を追加していく。
+
+7. formの作成
+    入力のvalidationを行うため、formを使ったvalidationを行う。
+    todo_app/forms.pyを作成する。
+    ```python
+    # todo_app/forms.py
     
+    from django import forms
+    from .models import List
+
+
+    class ListForm(forms.ModelForm):
+
+        class Meta:
+            model = List
+            fields = ['item', 'completed']
+    ```
+
+8. addの作成
+    forms.pyを使って入力値のvalidationを行い、OKなら追加、NGなら警告を出す。
+    ```python
+    # todo_app/views.py
+
+    def add(request):
+    if request.method == 'POST':
+        form = ListForm(request.POST or None)
+
+        if form.is_valid():  # validation
+            form.save()  # 保存
+            print('Validation Clear!')
+            all_items = List.objects.all()
+            params = {
+                'all_items': all_items
+            }
+            messages.success(request, ('Item has been added to list!'))
+            return render(requests, 'todo/index.html', params)
+        else:
+            messages.warning(requests, ('Validation faults!'))
+            print('Validation faults!')
+            print(form.errors)
+            all_items = List.objects.all()
+            params = {
+                'all_items': all_items
+            }
+            return render(request, 'todo/index.html', params)
+    ```

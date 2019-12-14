@@ -8,15 +8,15 @@
         {% for things in all_items %}
             {% if things.completed %}
                 <tr class="table-secondary">
-                    <td class="striker"><a href="{% url 'todo:edit' %}">{{ things.item }}</a></td>
-                    <td class="text-center"><a href="{% url 'todo:uncross' things.id %}">元に戻す</a></td>
-                    <td class="text-center"><a href="{% url 'todo:delete things.id ' %}">削除</a></td>
+                    <td class="striker"><a href="{% url 'todo_app:edit' things.id %}">{{ things.item }}</a></td>
+                    <td class="text-center"><a href="{% url 'todo_app:uncross' things.id %}">元に戻す</a></td>
+                    <td class="text-center"><a href="{% url 'todo_app:delete things.id ' %}">削除</a></td>
                 </tr>
             {% else %}
                 <tr>
-                    <td><a href="{% url 'todo:edit' things.edit %}">thinigs.item</a></td>
-                    <td class="text-center"><a href="{% url 'todo:cross_off' things.id %}">完了</a></td>
-                    <td class="text-center"><a href="{% url 'todo:delete' things.id %}">削除</a></td>
+                    <td><a href="{% url 'todo_app:edit' things.id %}">{{things.item}}</a></td>
+                    <td class="text-center"><a href="{% url 'todo_app:cross_off' things.id %}">完了</a></td>
+                    <td class="text-center"><a href="{% url 'todo_app:delete' things.id %}">削除</a></td>
                 </tr>
             {% endif %}
         {% endfor %}
