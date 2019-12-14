@@ -4,22 +4,29 @@
 
 {% block content %}
     {% if all_items %}
-    <table>
+    <table class="table table-bordered">
         {% for things in all_items %}
             {% if things.completed %}
-                <tr>
-                    <td><a href="#">things.item</a></td>
-                    <td><a href="#">元に戻す</a></td>
-                    <td><a href="#">削除</a></td>
+                <tr class="table-secondary">
+                    <td class="striker"><a href="{% url 'todo:edit' %}">{{ things.item }}</a></td>
+                    <td class="text-center"><a href="{% url 'todo:uncross' things.id %}">元に戻す</a></td>
+                    <td class="text-center"><a href="{% url 'todo:delete things.id ' %}">削除</a></td>
                 </tr>
             {% else %}
                 <tr>
-                    <td><a href="#">thinigs.item</a></td>
-                    <td><a href="#">完了</a></td>
-                    <td><a href="#">削除</a></td>
+                    <td><a href="{% url 'todo:edit' things.edit %}">thinigs.item</a></td>
+                    <td class="text-center"><a href="{% url 'todo:cross_off' things.id %}">完了</a></td>
+                    <td class="text-center"><a href="{% url 'todo:delete' things.id %}">削除</a></td>
                 </tr>
             {% endif %}
         {% endfor %}
     </table>
     {% endif %}
+    <!-- <table class="table table-bordered">
+        <tr class="table-secondary">
+            <td class="striker">aaaa</td>
+            <td class="text-center">aaaa</td>
+            <td class="text-center">aaaa</td>
+        </tr>
+    </table> -->
 {% endblock content %}
