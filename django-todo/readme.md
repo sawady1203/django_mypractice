@@ -313,9 +313,18 @@
     # テーブルの変更内容を記述したファイルが作成される。
     # これを元にテーブルが更新される
     
+    # マイグレーションに失敗するとつらいので、migrationファイルを作成したら必ずコミットする。
+    git add .
+    git commit -m "makemigrations todo_app/List"
+    
+    # マイグレーションしてテーブルを作成する
     python manage.py migrate
-
+        Operations to perform:
+            Apply all migrations: admin, auth, contenttypes, sessions, todo_app
+        Running migrations:
+            Applying todo_app.0001_initial... OK
     ```
+    これでデータの追加ができるようになった。
 
 5. views.pyを記述していく
     アプリケーションに必要な機能に合わせてviewを記述する。
