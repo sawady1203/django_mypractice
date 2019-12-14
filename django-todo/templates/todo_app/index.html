@@ -10,7 +10,7 @@
                 <tr class="table-secondary">
                     <td class="striker"><a href="{% url 'todo_app:edit' things.id %}">{{ things.item }}</a></td>
                     <td class="text-center"><a href="{% url 'todo_app:uncross' things.id %}">元に戻す</a></td>
-                    <td class="text-center"><a href="{% url 'todo_app:delete things.id ' %}">削除</a></td>
+                    <td class="text-center"><a href="{% url 'todo_app:delete' things.id %}">削除</a></td>
                 </tr>
             {% else %}
                 <tr>
@@ -21,6 +21,8 @@
             {% endif %}
         {% endfor %}
     </table>
+    {% else %}
+    <h2>No item!</h2>
     {% endif %}
     <!-- <table class="table table-bordered">
         <tr class="table-secondary">
