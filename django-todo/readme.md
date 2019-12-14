@@ -269,8 +269,61 @@
         path('', views.index, name='index'),  # 追加
     ]
     ```
+    ここで開発用サーバーを起動してみるが、下記エラーがでる。
+    ```sh
+    AttributeError: module 'todo_app.views' has no attribute 'index'
+    ```
+    まだtodo_app/views.indexを記述していないため。後で書く。
     ここでコミット。
     ```sh
     git add .
     git commit -m "todo_app/urls.py作成"
     ```
+4. Todoアプリに必要なテーブルを作成する。
+    todo_app/models.pyにテーブル構成を記述。
+    マイグレーションファイルを作成し、マイグレイトする。
+    ```python
+    # todo_app/models.py
+    from django.db import models
+
+    # Create your models here.
+
+
+    class List(models.Model):
+
+        # item名
+        item = models.CharField(
+            max_length=200
+            )
+
+        # 完了かどうか
+        completed = models.BooleanField(
+            default=False
+            )
+
+        def __str__(self):
+            return self.item + '|' + str(self.completed)
+    ```
+    models.pyに記述した内容をテーブルとして作成する
+    ```sh
+    python manage.py makemigrations todo_app
+    > Migrations for 'todo_app':
+       todo_app\migrations\0001_initial.py
+         - Create model List
+    # テーブルの変更内容を記述したファイルが作成される。
+    # これを元にテーブルが更新される
+    
+    python manage.py migrate
+
+    ```
+
+5. views.pyを記述していく
+    アプリケーションに必要な機能に合わせてviewを記述する。
+    **■Todoアプリに必要な機能**
+    - todoの一覧表示(index)
+    - todoの登録(add)
+    - todoの削除(delete)
+    - todoの完了(cross_off)
+    - todoの完了取り消し(uncross)
+    - todoの編集(edit)
+    
