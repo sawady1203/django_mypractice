@@ -4,10 +4,22 @@
 
 {% block content %}
     {% if all_items %}
+    <table>
         {% for things in all_items %}
-        <tr>
-            <td>{{ things.item }}</td>
-        </tr>    
+            {% if things.completed %}
+                <tr>
+                    <td><a href="#">things.item</a></td>
+                    <td><a href="#">元に戻す</a></td>
+                    <td><a href="#">削除</a></td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td><a href="#">thinigs.item</a></td>
+                    <td><a href="#">完了</a></td>
+                    <td><a href="#">削除</a></td>
+                </tr>
+            {% endif %}
         {% endfor %}
+    </table>
     {% endif %}
 {% endblock content %}
