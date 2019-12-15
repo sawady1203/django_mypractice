@@ -25,6 +25,15 @@
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Add</button>
                 </form>
             </div>
+
+            {% if user.is_authenticated %}
+                <p class="navbar-brand">Hi, {{ user.username }}</p>
+                <p><a href="{% url 'logout' %}">Log Out</a></p>
+            {% else %}
+                <p>you are not logged in.</p>
+                <a href="{% url 'login' %}">Log In</a>
+            {% endif %}
+
         </nav>
         <br>
         <div class="container">
