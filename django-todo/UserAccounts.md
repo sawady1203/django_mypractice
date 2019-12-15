@@ -1,5 +1,8 @@
 # Djangoでユーザー管理機能を作る
 
+DJANGO FOR BIGINNERSを参照
+https://www.amazon.co.jp/dp/B079ZZLRRL/ref=dp-kindle-redirect?_encoding=UTF8&btkr=1
+
 ## User Authntication
 
 Djangoではプロジェクトを作成した時点で`auth`アプリができている。
@@ -214,3 +217,89 @@ templates/accounts/signup.htmlを作成する。
 
 ここでcommitしておく。
 
+## Custom User Modelを使う
+
+DjangoのBuild-inのUserモデルを利用しても良いが、ユーザー情報を追加した場合はUserモデルを更新するのはマジで大変らしい。
+
+公式で紹介されている`AbstractBaseUser`はあんまりおススメされていないため、ここではよりカスタマイズしやすい`AbstractUser`を作成してみる。
+
+**カスタムユーザーモデルの作成手順**
+
+1. settings.pyの更新
+2. CustomUser modelの作成3
+3. UserCreationFormとUserChangeFormの作成
+4. users/admin.pyの更新
+
+### 1. settings.pyの更新
+
+認証用のユーザーモデルはカスタムモデルを使用することを宣言する。
+accountsアプリにカスタムユーザーモデルを作成して、利用する形を取る。
+
+```python
+# config/settings.py
+AUTH_USER_MODEL = 'accounts.CustomUser'  # 追加
+```
+models.pyにAbstractUserを継承したカスタムユーザーモデルを作成する。
+
+```python 
+# accounts/models.py
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+
+
+class CustomUser(AbstractUser):
+    age = models.PositiveIngerField(null=True, blank=True)
+```
+
+accounts/forms.pyを作成して入力用のフォームやvalidationに使用する。
+このformはユーザーがサインアップのためにも使用し、管理者が既存のユーザーを操作したいときに使用する。
+
+```python
+# accounts/forms.py
+from django import forms
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+
+from .models import CustomUser
+
+
+class CustromUserCreationForm(UserCreationForm):
+    class Meta(UserCreationForm):
+        model = CustomUser
+        fields = UserCreationForm.Meta.fields + ('age')
+
+
+class CustomUserChangeForm(UserChangeForm):
+    class Meta(UserChangeForm):
+        model = CustomUser
+        fields = UserChangeForm.Meta.fields
+```
+
+UserCreationFormを継承して、使用するfieldsにはカスタムモデルの'age'を追加した。
+
+続いてaccounts/admin.pyを更新する。CustomUserモデルを使うためにAccountsAdminモデルを作成する。
+
+```python
+# accounts/admin.py
+
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
+
+from .forms import CustomUserCreationForm, CustomUserChangeForm
+from .models import CustomUser
+
+
+class CustomUserAdmin(UserAdmin):
+    add_form = CustomUserCreationForm
+    form = CustomUserChangeForm
+    model = CustomUser
+
+
+admin.site.register(CustomUser, CustomUserAdmin)
+```
+
+カスタムユーザーモデルをテーブルに反映させるため、makemigraionsを行う
+
+```sh
+python manage.py makemigrations acconts
+python manage.py migrate
+```

@@ -29,7 +29,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'todo_app'  # 追加
+    'todo_app.apps.TodoAppConfig',  # 変更
+    'accounts.apps.AccountsConfig',  # 追加
 ]
 
 MIDDLEWARE = [
@@ -118,3 +119,5 @@ MEDIA_URL = '/media/'  # 変更
 
 LOGIN_REDIRECT_URL = '/'  # 追加
 LOGOUT_REDIRECT_URL = '/accounts/login'  # 追加
+
+AUTH_USER_MODEL = 'accounts.CustomUser'  # 追加
