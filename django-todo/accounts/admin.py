@@ -12,5 +12,7 @@ class CustomUserAdmin(UserAdmin):
     form = CustomUserChangeForm
     model = CustomUser
 
+    list_display = ['email', 'username', 'age', 'is_staff', ]  # 追加
+
 
 admin.site.register(CustomUser, CustomUserAdmin)
