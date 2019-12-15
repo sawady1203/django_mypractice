@@ -168,7 +168,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # 追加
 STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')  # 追加
 
-MEDIA_URL = '/media/'  # 変更
+MEDIA_URL = '/media/'  # 追加
 
 ```
 とりあえず基礎的なところだけ。
@@ -251,9 +251,83 @@ cd ../../  # プロジェクト管理下まで戻る
 ```
 
 base.htmlを編集する
+基本的にTodoアプリと同じ。
 
 ```html
+<!-- templates/base.html -->
+{% load static %}
 
+<!DOCTYPE html>
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Sample</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <a class="navbar-brand" href="{% url 'sample:index' %}">SAMPLE</a>
+            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#Navber" aria-controls="Navber" aria-expanded="false" aria-label="ナビゲーションの切替">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </nav>
+        <br>
+        <div class="container">
+            {% block content %}
+            {% endblock content %}
+        </div>
+        <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap.js' %}"></script>
+    </body>
+</html>
 ```
 
-### 3. ユーザー管理機能を作っていく
+base.htmlをextendsしたindex.htmlをかく
+
+```html
+<!-- templates/sample/index.html -->
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+  <h1>{{ msg }}</h1>
+{% endblock content %}
+```
+
+開発用サーバーを起動してhttp://127.0.0.1:8000にアクセスするとHello django!がみられる。
+
+
+### 3. django-allauthをつかってユーザー管理機能を作っていく
+
+settings.pyにログイン・ログアウト成功時のリダイレクト先を設定する。
+認証のバックエンドはデフォルトのModelBackendだけでなく、他のものも追加できる。
+今回はallauthのバックエンドを追加する。
+
+ユーザー認証がうまくいったらメールでの通知などを行いたいが、SMTPサーバーを作るまではうまくいかない。
+SMTPサーバの代わりにconsole上で確認がとれる設定をしておく。
+
+```python
+# config/settings.py
+LOGIN_REDIRECT_URL = '/'  # 追加
+ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'  # 追加
+
+# 追加
+# django-allauth config
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',  # 追加
+)
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackEnd'  # 追加
+```
+
+この設定ができた段階で初めてマイグレーションする。
+
+```sh
+python manage.py migrate
+```
