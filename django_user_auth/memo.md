@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',  # 追加
     'allauth',  # 追加
     'allauth.account',  # 追加
     'allauth.socialaccount',  # 追加
@@ -171,6 +172,8 @@ STATIC_URL = '/static/'
 アプリケーションを作成する。
 
 ```sh
+git add .
+git commit -m "settings.pyにauth追加"
 python manage.py startapp sample
 ```
 
