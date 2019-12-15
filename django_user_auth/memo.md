@@ -331,3 +331,177 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackEnd'  # 追加
 ```sh
 python manage.py migrate
 ```
+
+config/urls.pyにallauthアプリのURLを追加する。
+
+```python
+# config/urls.py
+
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('accounts/', include('allauth.urls')),  # 追加
+    path('', include('sample.urls')),
+]
+```
+
+tempates/accountを作成してlogin.html, signup.htmlを作成する。
+crispy-formsもインストールする。
+```sh
+cd templates
+mkdir account
+type nul > login.html
+type nul > signup.html
+cd ../../  # 管理ディレクトリまで戻る
+pip install django-crispy-forms
+```
+
+settings.pyに追加。
+
+```python
+# Application definition
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'crispy_forms', # Third-party 追加
+    'django.contrib.sites',  # 追加
+    'allauth',  # 追加
+    'allauth.account',  # 追加
+    'allauth.socialaccount',  # 追加
+    'sample',  # 追加
+]
+
+# django-crispy-forms
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+```
+
+templates/account/にsignup.htmlを追加
+
+```html
+<!-- templates/account/signup.html -->
+
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <h2>Sign Up</h2>
+  <form method='post'>
+      {% csrf_token %}
+      {{ form|crispy }}
+      <button class="btn btn-success" type="submit">Sign Up</button>
+  </form>
+{% endblock content %}
+```
+
+templates/account/にlogin.htmlを追加
+
+```html
+<!-- templates/account/login.html -->
+
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+  Login
+{% endblock title %}
+
+{% block content %}
+  <h2>Log In</h2>
+  <form method='post'>
+      {% csrf_token %}
+      {{ form|crispy }}
+      <button class="btn btn-success" type="submit">Log In</button>
+  </form>
+{% endblock content %}
+```
+
+templates/sample/index.htmlを変更
+
+```html
+<!-- tempaltes/sample/inidex.html -->
+
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+  Index
+{% endblock title %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+    <p>Hi {{ user.email }}!</p>
+    <p><a href="{% url 'account_logout' %}">Log Out</a></p>
+  {% else %}
+    <p>You are not logged in</p>
+    <p><a href="{% url 'account_login' %}">Log In</a></p>
+    <a href="{% url 'account_signup' %}">Sign Up</a>
+  {% endif %}
+  <h1>{{ msg }}</h1>
+{% endblock content %}
+```
+
+templates/base.htmlを変更
+
+```html
+<!-- templates/base.html -->
+
+{% load static %}
+
+<!DOCTYPE html>
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{% block title %}{% endblock title %}</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <a class="navbar-brand" href="{% url 'sample:index' %}">SAMPLE</a>
+            {% if user.is_authenticated %}
+                <a class="p-2 text-dark" href="{% url 'account_logout' %}">Log Out</a>
+            {% else %}
+                <a class="p-2 text-dark" href="{% url 'account_login' %}">Log In</a>
+                <a class="btn btn-outline-primary" href="{% url 'account_signup' %}">Sign Up</a>
+            {% endif %}
+        </nav>
+        <br>
+        <div class="container">
+            {% block content %}
+            {% endblock content %}
+        </div>
+        <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap.js' %}"></script>
+    </body>
+</html>
+```
+
+最後にviews.pyのindex関数にlogin_requiredのデコレータをつけて完了。
+
+```python
+# sample/views.py
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required  # 追加
+
+@login_required  # 追加
+def index(request):
+    if request.method == 'GET':
+        msg = 'Hello django!'
+        params = {
+            'msg': msg
+        }
+        return render(request, 'sample/index.html', params)
+```
+

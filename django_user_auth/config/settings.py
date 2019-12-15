@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms', # Third-party 追加
     'django.contrib.sites',  # 追加
     'allauth',  # 追加
     'allauth.account',  # 追加
@@ -135,6 +136,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')  # 追加
 
 MEDIA_URL = '/media/'  # 変更
 
+# django-crispy-forms
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 LOGIN_REDIRECT_URL = '/'  # 追加
 ACCOUNT_LOGOUT_REDIRECT_URL = '/accounts/login/'  # 追加
 
@@ -146,3 +150,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackEnd'  # 追加
+
+# ACCOUNT_SESSION_REMEMBER = True  # 追加
+
+ACCOUNT_LOGOUT_ON_GET = True  # 追加

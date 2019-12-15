@@ -1,7 +1,21 @@
+<!-- tempaltes/sample/inidex.html -->
+
 {% extends "base.html" %}
 
 {% load static %}
 
+{% block title %}
+  Index
+{% endblock title %}
+
 {% block content %}
+  {% if user.is_authenticated %}
+    <p>Hi {{ user.email }}!</p>
+    <p><a href="{% url 'account_logout' %}">Log Out</a></p>
+  {% else %}
+    <p>You are not logged in</p>
+    <p><a href="{% url 'account_login' %}">Log In</a></p>
+    <a href="{% url 'account_signup' %}">Sign Up</a>
+  {% endif %}
   <h1>{{ msg }}</h1>
 {% endblock content %}
