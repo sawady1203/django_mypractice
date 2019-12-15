@@ -165,6 +165,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # 追加
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')  # 追加
+
+MEDIA_URL = '/media/'  # 変更
 
 ```
 とりあえず基礎的なところだけ。
@@ -175,6 +179,81 @@ STATIC_URL = '/static/'
 git add .
 git commit -m "settings.pyにauth追加"
 python manage.py startapp sample
+git add .
+git commit -m "startapp sample"
+```
+
+config/urls.pyにsampleアプリケーションのURLをつなぐ
+
+```python
+# config/urls.py
+
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('sample.urls')),
+]
+
+```
+
+sample/urls.pyを作成してsample.veiwsにつなぐ
+
+```python
+# sample/urls.py
+
+from django.urls import path, include
+from . import views
+
+urlpatterns = [
+    path('', views.index, name='index'),
+]
+```
+
+```python
+# sample/views.py
+
+from django.shortcuts import render
+
+
+def index(request):
+    if request.method == 'GET':
+        msg = 'Hello django!'
+        params = {
+            'msg': msg
+        }
+        return render(request, 'sample/index.html', params)
+```
+
+templates/samples/index.htmlを追加する。
+
+```sh
+cd templates
+type nul > index.html
+mkdir sample
+cd sample
+type nul > base.html
+cd ../../  # プロジェクト管理下まで戻る
+```
+
+static管理下にcssフォルダとjsフォルダを作成してbootstrapファイルを設置する。
+
+```sh
+mkdir static
+cd static
+mkdir css
+mkdir js
+# bootstrapのファイルはドラッグ＆ドロップで。。。
+cd css
+type nul > main.css  # いつもmain.cssを追加しておく。bootstrap以外でのオリジナルcss。
+cd ../../  # プロジェクト管理下まで戻る
+```
+
+base.htmlを編集する
+
+```html
+
 ```
 
 ### 3. ユーザー管理機能を作っていく

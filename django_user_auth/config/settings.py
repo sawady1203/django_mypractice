@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'allauth',  # 追加
     'allauth.account',  # 追加
     'allauth.socialaccount',  # 追加
+    'sample',  # 追加
 ]
 
 SITE_ID = 1  # 追加
@@ -129,3 +130,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # 追加
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')  # 追加
+
+MEDIA_URL = '/media/'  # 変更
