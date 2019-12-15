@@ -262,16 +262,17 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import CustomUser
 
 
-class CustromUserCreationForm(UserCreationForm):
+class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm):
         model = CustomUser
-        fields = UserCreationForm.Meta.fields + ('age')
+        fields = UserCreationForm.Meta.fields + ('age',)
 
 
 class CustomUserChangeForm(UserChangeForm):
     class Meta(UserChangeForm):
         model = CustomUser
         fields = UserChangeForm.Meta.fields
+
 ```
 
 UserCreationFormを継承して、使用するfieldsにはカスタムモデルの'age'を追加した。
