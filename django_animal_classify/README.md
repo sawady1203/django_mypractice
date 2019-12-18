@@ -560,10 +560,11 @@ ACCOUNT_LOGOUT_ON_GET = True  # logout時にlogout.htmlに飛ばない設定
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 ```
 
-
-
 #### 2.9 django-allauthでEmail-Onlyログイン化
 
-
+Django-allauthであれば設定を追加するだけで簡単に実現できる。
+- ユーザー名は必要ない
+- メールアドレスはユニークなもの
+- メールアドレスは必須。
 
 ### 3. 画像分類アプリの作成

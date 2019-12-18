@@ -166,3 +166,30 @@ ACCOUNT_LOGOUT_ON_GET = True  # logout時にlogout.htmlに飛ばない設定
 
 # django-crispy-forms
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# 認証方式をメールアドレスとパスワードに変更
+ACCOUNT_AUTHENTICATION_METHOD = 'email'  # 追加
+
+# ユーザー名は使用する
+ACCOUNT_USERNAME_REQUIRED = True  # 追加
+# ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+
+# メールアドレスを必須項目にする
+ACCOUNT_EMAIL_REQUIRED = True  # 追加
+
+# ユーザー登録確認メールは送信しない
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+# メールアドレスをユニークなものにする
+ACCOUNT_UNIQUE_EMAIL = True  # 追加
+
+# signupformを指定
+ACCOUNT_FORMS = {
+    'signup': 'users.forms.CustomSignupForm'
+}
+
+# signupformからの情報をCustomUserModelに保存するための設定
+ACCOUNT_ADAPTER = 'users.adapter.AccountAdapter'
+
+# passwordの入力を1回に
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False

@@ -11,4 +11,5 @@ class CustomUser(AbstractUser):
         db_table = 'custom_user'
 
     # 年齢を追加したい場合
-    # age = models.IntegerField('年齢', blank=True, null=True)
+    age = models.IntegerField('年齢', blank=True, null=True)
+    weight = models.IntegerField('体重', blank=True, null=True)
