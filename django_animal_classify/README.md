@@ -178,7 +178,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # 開発環境で静的ファイルを参照する先
-STATICFILES_DIR = [os.path.join(BASE_DIR, 'static')]  # 追加
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # 追加
 
 # 本番環境で静的ファイルを参照する先
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # 追加
@@ -457,8 +457,110 @@ type nul > templates/account/singup.html
 ```
 
 ```html
+<!-- templates/base.html -->
+{% load static %}
 
+<!DOCTYPE html>
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{% block title %}{% endblock title %}</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <a class="navbar-brand" href="{% url 'animal_cf:index' %}">Animal Classification</a>
+            {% if user.is_authenticated %}
+                <a class="btn btn-outline-primary" href="{% url 'account_logout' %}">ログアウト</a>
+            {% else %}
+                <!-- <a class="btn btn-outline-primary" href="{% url 'account_login' %}">ログイン</a> -->
+                <a class="btn btn-outline-primary" href="{% url 'account_signup' %}">アカウント登録</a>
+            {% endif %}
+        </nav>
+        <br>
+        <div class="container">
+            {% block content %}
+            {% endblock content %}
+        </div>
+        <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap.js' %}"></script>
+    </body>
+</html>
 ```
+
+```html
+<!-- templates/account/login.html -->
+
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+  ログイン
+{% endblock title %}
+
+{% block content %}
+  <h2>ログイン</h2>
+  <form method='post'>
+      {% csrf_token %}
+      {{ form|crispy }}
+      <button class="btn btn-success" type="submit">Log In</button>
+  </form>
+{% endblock content %}
+```
+
+```html
+<!-- templates/account/login.html -->
+
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+  LogOut
+{% endblock title %}
+
+{% block content %}
+  <h2>ログアウトします</h2>
+  <form method='post'>
+      {% csrf_token %}
+      {{ form|crispy }}
+      <button class="btn btn-success" type="submit">ログアウト</button>
+  </form>
+{% endblock content %}
+```
+
+```html
+<!-- templates/account/signup.html -->
+
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <h2>Sign Up</h2>
+  <form method='post'>
+      {% csrf_token %}
+      {{ form|crispy }}
+      <button class="btn btn-success" type="submit">Sign Up</button>
+  </form>
+{% endblock content %}
+```
+
+settings.pyも少し変更する。
+
+```python
+
+LOGIN_REDIRECT_URL = '/'
+ACCOUNT_LOGOUT_REDIRECT = 'accounts/login/'
+ACCOUNT_LOGOUT_ON_GET = True  # logout時にlogout.htmlに飛ばない設定
+
+# django-crispy-forms
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+```
+
+
 
 #### 2.9 django-allauthでEmail-Onlyログイン化
 

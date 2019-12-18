@@ -4,11 +4,11 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-  Login
+  ログイン
 {% endblock title %}
 
 {% block content %}
-  <h2>Log In</h2>
+  <h2>ログイン</h2>
   <form method='post'>
       {% csrf_token %}
       {{ form|crispy }}

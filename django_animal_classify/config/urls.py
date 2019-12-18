@@ -22,4 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # User management
     path('accounts/', include('allauth.urls')),  # 追加
+    # apps
+    path('', include('animal_cf.urls')),  # 追加
 ]

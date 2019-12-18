@@ -52,6 +52,8 @@ INSTALLED_APPS = [
 
     # Local
     'users.apps.UsersConfig',  # 追加
+    'animal_cf.apps.AnimalCfConfig',  # 追加
+
 ]
 
 MIDDLEWARE = [
@@ -135,7 +137,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # 開発環境で静的ファイルを参照する先
-STATICFILES_DIR = [os.path.join(BASE_DIR, 'static')]  # 追加
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # 追加
 
 # 本番環境で静的ファイルを参照する先
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # 追加
@@ -159,4 +161,8 @@ AUTHENTICATION_BACKENDS = (
 EMAIL_BACKENDS = 'django.core.mail.backends.console.EmailBackend'  # 追加
 
 LOGIN_REDIRECT_URL = '/'
-ACCOUNT_LOGOUT_REDIRECT = 'accounts/login'
+ACCOUNT_LOGOUT_REDIRECT = 'accounts/login/'
+ACCOUNT_LOGOUT_ON_GET = True  # logout時にlogout.htmlに飛ばない設定
+
+# django-crispy-forms
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
