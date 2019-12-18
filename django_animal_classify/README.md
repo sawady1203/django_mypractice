@@ -112,7 +112,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # 変更
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -204,4 +204,154 @@ git commit - m "start animal classification django-project"
 ```
 
 ### 2. ログイン機能の作成
+
+ログイン機能はdjango-allauthとカスタムユーザーを使用する。
+カスタムユーザーモデルを使った認証は次のステップを踏む。
+
+2.1. `users`アプリを作成
+2.2 `CustomUser`モデルを作成
+2.3 `settings.py`を更新
+2.4 `UserCreationForm`と`UserChangeForm`をカスタマイズ
+2.5 `admin.py`にカスタムユーザーモデルを追加する。
+2.6 マイグレーション
+2.8 django-allauthの設定
+2.7 テンプレートの作成
+2.9 django-allauthでEmail-Onlyログイン化
+
+#### 2.1. `users`アプリを作成
+
+カスタムユーザー用に`users`アプリを作成する。
+
+```sh
+python manage.py startapp users
+```
+
+#### 2.2 `CustomUser`モデルを作成
+
+users/models.pyにカスタムユーザーモデルの情報を定義する。
+`AbstractBaseUser`か`AbstractUser`を継承するが、`AbstractUser`の方がデフォルトの`User`フィールドを
+保持したまま設定できる。今回は`AbstractUser`を継承する。
+
+```python
+# users/models.py
+
+from django.contrib.auth.models import AbstractUser
+from django.db import models
+
+
+class CustormUser(AbstractUser):
+    """拡張ユーザーモデル"""
+
+    class Meta(AbstractUser.Meta):
+        db_table = 'custom_user'
+
+    # 年齢を追加したい場合
+    # age = models.IntegerField('年齢', blank=True, null=True)
+
+```
+
+#### 2.3 `settings.py`を更新
+
+settings.pyにusersアプリを追加する。
+
+```python
+# config/settings.py
+
+# Application definition
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+
+    # Local
+    'users.apps.UsersConfig',  # 追加
+]
+
+##################
+# Authentication #
+##################
+
+AUTH_USER_MODEL = 'users.CustomUser'  # 追加
+```
+
+#### 2.4 `UserCreationForm`と`UserChangeForm`をカスタマイズ
+
+forms.pyを作成してユーザー情報の登録内容のフォームを作成する。
+
+```sh
+type nul > users/forms.py
+```
+
+```python
+# users/forms.py
+
+"""
+usernameを追加せずにemailとpasswordだけの認証にしたいが、それはdjango-allauthの設定で行う。
+"""
+
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+
+
+class CustomUserCreationForm(UserCreationForm):
+
+    class Meta:
+        model = get_user_model()  # AUTH_USER_MODEL config in settings.py
+        fields = ('email', 'username')  # password is default
+
+
+class CustomUserChangeForm(UserChangeForm):
+
+    class Meta:
+        model = get_user_model()  # AUTH_USER_MODEL config in settings.py
+        fields = ('email', 'username')  # password is default
+
+```
+
+#### 2.5 `admin.py`にカスタムユーザーモデルを追加する。
+
+このCustomUserモデルをadmin.pyで確認できるようにする。
+
+```python
+# users/admin.py
+
+from django.contrib import admin
+from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import UserAdmin
+
+from .forms import CustomUserCreationForm, CustomUserChangeForm
+
+CustomUser = get_user_model()
+
+
+class CustomUserAdmin(UserAdmin):
+    add_form = CustomUserCreationForm
+    form = CustomUserChangeForm
+    model = CustomUser
+
+    list_display = ['email', 'username']
+
+
+admin.site.register(CustomUser, CustomUserAdmin)
+
+```
+
+usersアプリケーションでカスタムユーザーモデルの設定を行い、デフォルトの`django.contrib.auth`で
+ログイン、ログアウトはできるようになった。サインアップだけはusers/views.pyに処理を作成する。
+
+今回は`django.contrib.auth`ではなく`django-allauth`を使用して丸っと認証の設定を行う。
+
+ここでコミットしておく。
+
+#### 2.6 マイグレーション
+#### 2.8 django-allauthの設定
+#### 2.7 テンプレートの作成
+#### 2.9 django-allauthでEmail-Onlyログイン化
+
+
+
 ### 3. 画像分類アプリの作成

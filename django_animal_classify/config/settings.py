@@ -43,7 +43,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Local
+    'users.apps.UsersConfig',  # 追加
 ]
+
+##################
+# Authentication #
+##################
+
+AUTH_USER_MODEL = 'users.CustomUser'  # 追加
+
 
 SITE_ID = 1  # 追加
 
