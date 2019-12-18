@@ -213,7 +213,7 @@ git commit - m "start animal classification django-project"
 2.3 `settings.py`を更新
 2.4 `UserCreationForm`と`UserChangeForm`をカスタマイズ
 2.5 `admin.py`にカスタムユーザーモデルを追加する。
-2.6 マイグレーション
+2.6 マイグレーションとsuperuser
 2.8 django-allauthの設定
 2.7 テンプレートの作成
 2.9 django-allauthでEmail-Onlyログイン化
@@ -333,7 +333,9 @@ class CustomUserAdmin(UserAdmin):
     form = CustomUserChangeForm
     model = CustomUser
 
-    list_display = ['email', 'username']
+    list_display = ['email', 'username', 'is_staff']
+    search_fields = ('first_name', 'last_name', 'email')
+    ordering = ('email', )
 
 
 admin.site.register(CustomUser, CustomUserAdmin)
@@ -347,8 +349,25 @@ usersアプリケーションでカスタムユーザーモデルの設定を行
 
 ここでコミットしておく。
 
-#### 2.6 マイグレーション
+#### 2.6 マイグレーションとsuperuser
+
+```sh
+python manage.py makemigrations
+python manage.py migrate
+
+# 管理者作成
+python manage.py createsuperuser
+
+# アクセスして確認してみる
+python manage.py runserver
+```
+
+確かにカスタムユーザーのテーブルができていることが確認できる。
+
 #### 2.8 django-allauthの設定
+
+
+
 #### 2.7 テンプレートの作成
 #### 2.9 django-allauthでEmail-Onlyログイン化
 
