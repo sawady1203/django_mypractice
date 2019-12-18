@@ -422,7 +422,44 @@ allauthを追加したので、migrateする必要がある。
 python manage.py migrate
 ```
 
-#### 2.7 テンプレートの作成
+#### 2.7 URLsを追加する
+
+authアップと同じようにdjango-allauthも'accounts/'以下を使用する。
+
+```python
+# config/urls.py
+
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    # User management
+    path('account/', include('allauth.urls')),  # 追加
+]
+```
+
+とりあえずこれでLogin, Logout, SingUpを進めてみる。
+
+#### 2.8 テンプレートの作成
+
+下記のファイルを作成していく。
+templates/base.html
+templates/account/login.html
+templates/account/logout.html
+templates/account/signup.html
+
+```sh
+type nul > templates/base.html
+type nul > templates/account/login.html
+type nul > templates/account/logout.html
+type nul > templates/account/singup.html
+```
+
+```html
+
+```
+
 #### 2.9 django-allauthでEmail-Onlyログイン化
 
 
