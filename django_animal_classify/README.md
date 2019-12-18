@@ -194,5 +194,14 @@ MEDIA_URL = '/media/'
 python manage.py runserver
 ```
 
+問題なく起動できた。
+ログイン機能を作成する前にbootstrapのファイルをstaticフォルダに格納しておく。
+.envに環境変数は避難したのでcommitする。
+
+```sh
+git add .
+git commit - m "start animal classification django-project"
+```
+
 ### 2. ログイン機能の作成
 ### 3. 画像分類アプリの作成

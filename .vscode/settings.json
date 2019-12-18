@@ -1,3 +1,7 @@
 {
-    "python.pythonPath": "C:\\Users\\masayoshi\\AppData\\Local\\Programs\\Python\\Python37\\python.exe"
+    "python.pythonPath": "C:\\Users\\masayoshi\\AppData\\Local\\Programs\\Python\\Python37\\python.exe",
+    "python.pythonPath": "C:\\Users\\masayoshi\\Documents\\03.study\\17. Portfolio\\django_mypractice\\django_animal_classify\\venv-animal\\Scripts\\python.exe",
+    "python.linting.pycodestyleEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.linting.enabled": true
 }

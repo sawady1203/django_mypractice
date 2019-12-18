@@ -107,6 +107,7 @@ celerybeat.pid
 env/
 venv/
 venv_user_auth/
+venv-animal/
 ENV/
 env.bak/
 venv.bak/

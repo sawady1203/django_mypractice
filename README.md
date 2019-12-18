@@ -9,3 +9,6 @@ Djnaogで基本的なToDoアプリを作ってみる
 ## 2. djagno_user_auth
 Djangoでhello djangoレベルのアプリケーションにユーザーログイン機能を追加する。
 all-authを使用。
+
+## 3. django_animal_classify
+DjangoとChainerを使った動物の分類アプリケーションを作成する。
