@@ -366,7 +366,61 @@ python manage.py runserver
 
 #### 2.8 django-allauthの設定
 
+サードパーティ製のdjango-allauthを使って認証機能を追加する。
+settings.pyのAPPSに追加する。
 
+**EMAIL_BACKENDS**
+djangoはメールを送るためにsmtpサーバーの設定を探しに行くので設定を加えたいが、
+まだSMTPサーバーを用意していない場合、エラーが起きてしまう。
+ということでSMTPサーバーが用意できるまではメールの内容をコンソールに出力されるように設定しておく。
+
+```python
+# config/settings.py
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.sites',  # 追加
+
+    # Third-party
+    'crispy_forms',  # 追加
+    'allauth',  # 追加
+    'allauth.account',  # 追加
+
+    # Local
+    'users.apps.UsersConfig',  # 追加
+]
+
+# ～～～省略～～～～
+
+##################
+# Authentication #
+##################
+
+AUTH_USER_MODEL = 'users.CustomUser'  # 追加
+
+SITE_ID = 1  # 追加
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',  # default
+    'allauth.account.auth_backends.AuthenticationBackend',  # 追加
+)
+
+EMAIL_BACKENDS = 'django.core.mail.backends.console.EmailBackend'  # 追加
+
+LOGIN_REDIRECT_URL = 'index'
+ACCOUNT_LOGOUT_REDIRECT = 'accounts/login'
+```
+
+allauthを追加したので、migrateする必要がある。
+
+```sh
+python manage.py migrate
+```
 
 #### 2.7 テンプレートの作成
 #### 2.9 django-allauthでEmail-Onlyログイン化

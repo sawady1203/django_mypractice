@@ -43,19 +43,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',  # 追加
+
+    # Third-party
+    'crispy_forms',  # 追加
+    'allauth',  # 追加
+    'allauth.account',  # 追加
 
     # Local
     'users.apps.UsersConfig',  # 追加
 ]
-
-##################
-# Authentication #
-##################
-
-AUTH_USER_MODEL = 'users.CustomUser'  # 追加
-
-
-SITE_ID = 1  # 追加
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -145,3 +142,21 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # 追加
 
 # メディアファイルpath
 MEDIA_URL = '/media/'
+
+##################
+# Authentication #
+##################
+
+AUTH_USER_MODEL = 'users.CustomUser'  # 追加
+
+SITE_ID = 1  # 追加
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',  # default
+    'allauth.account.auth_backends.AuthenticationBackend',  # 追加
+)
+
+EMAIL_BACKENDS = 'django.core.mail.backends.console.EmailBackend'  # 追加
+
+LOGIN_REDIRECT_URL = 'index'
+ACCOUNT_LOGOUT_REDIRECT = 'accounts/login'
