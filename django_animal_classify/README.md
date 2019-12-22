@@ -783,4 +783,44 @@ that <a href="mailto:{{ email }}">{{ email }}</a> is an e-mail address for user
 ### 3. 画像分類アプリの作成
 
 ここから肝心の動物の画像分類アプリを作成していく。
+画像を投稿する機能を作成するので、animal/models.pyにイメージフィールドを定義する。
+
+```python
+# animal_cf/models.py
+
+from django.db import models
+
+# Create your models here.
+
+
+class AnimalImage(models.Model):
+
+    class Meta:
+        db_table = 'animal_image'
+
+    animal_image = models.ImageField(
+        verbose_name = 'イメージ',
+        blank=True, null=True,
+        upload_to = 'images/'
+    )
+
+```
+
+モデルを更新したので、makemigrationsを行う。
+
+```sh
+python manage.py makemigrations animal_cf
+SystemCheckError: System check identified some issues:
+
+ERRORS:
+animal_cf.AnimalImage.animal_image: (fields.E210) Cannot use ImageField because Pillow is not installed.
+        HINT: Get Pillow at https://pypi.org/project/Pillow/ or run command "python -m pip install Pillow".
+
+# Pillowが無いと怒られたので,Pillowをインストールする。
+pip install Pillow
+
+# 気を取り直して
+python manage.py makemigrations animal_cf
+python manage.py migrate
+```
 
