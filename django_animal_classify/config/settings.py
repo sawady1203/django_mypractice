@@ -158,7 +158,8 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',  # 追加
 )
 
-EMAIL_BACKENDS = 'django.core.mail.backends.console.EmailBackend'  # 追加
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # 追加
+DEFAULT_FROM_EMAI = 'admin@animal_cf.com'  # 追加
 
 LOGIN_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_REDIRECT = 'accounts/login/'
@@ -178,7 +179,7 @@ ACCOUNT_USERNAME_REQUIRED = True  # 追加
 ACCOUNT_EMAIL_REQUIRED = True  # 追加
 
 # ユーザー登録確認メールは送信しない
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+# ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 # メールアドレスをユニークなものにする
 ACCOUNT_UNIQUE_EMAIL = True  # 追加
@@ -193,3 +194,6 @@ ACCOUNT_ADAPTER = 'users.adapter.AccountAdapter'
 
 # passwordの入力を1回に
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
+
+# 
+DEFAULT_FROM_EMAIL = 'admin@animal_cf.com'

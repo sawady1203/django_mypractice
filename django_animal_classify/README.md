@@ -364,7 +364,7 @@ python manage.py runserver
 
 確かにカスタムユーザーのテーブルができていることが確認できる。
 
-#### 2.8 django-allauthの設定
+#### 2.7 django-allauthの設定
 
 サードパーティ製のdjango-allauthを使って認証機能を追加する。
 settings.pyのAPPSに追加する。
@@ -422,7 +422,7 @@ allauthを追加したので、migrateする必要がある。
 python manage.py migrate
 ```
 
-#### 2.7 URLsを追加する
+#### 2.8 URLsを追加する
 
 authアップと同じようにdjango-allauthも'accounts/'以下を使用する。
 
@@ -441,7 +441,7 @@ urlpatterns = [
 
 とりあえずこれでLogin, Logout, SingUpを進めてみる。
 
-#### 2.8 テンプレートの作成
+#### 2.9 テンプレートの作成
 
 下記のファイルを作成していく。
 templates/base.html
@@ -560,11 +560,224 @@ ACCOUNT_LOGOUT_ON_GET = True  # logout時にlogout.htmlに飛ばない設定
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 ```
 
-#### 2.9 django-allauthでEmail-Onlyログイン化
+#### 2.10 django-allauthでEmail-Onlyログイン化
 
 Django-allauthであれば設定を追加するだけで簡単に実現できる。
 - ユーザー名は必要ない
 - メールアドレスはユニークなもの
 - メールアドレスは必須。
+
+```python
+# 認証方式をメールアドレスとパスワードに変更
+ACCOUNT_AUTHENTICATION_METHOD = 'email'  # 追加
+
+# ユーザー名は使用する
+ACCOUNT_USERNAME_REQUIRED = True  # 追加
+# ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+
+# メールアドレスを必須項目にする
+ACCOUNT_EMAIL_REQUIRED = True  # 追加
+
+# ユーザー登録確認メールは送信しない
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+# メールアドレスをユニークなものにする
+ACCOUNT_UNIQUE_EMAIL = True  # 追加
+
+# signupformを指定
+ACCOUNT_FORMS = {
+    'signup': 'users.forms.CustomSignupForm'
+}
+
+# signupformからの情報をCustomUserModelに保存するための設定
+ACCOUNT_ADAPTER = 'users.adapter.AccountAdapter'
+
+# passwordの入力を1回に
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
+```
+
+settings.pyにdjango-allauthに必要なものを追加する。
+
+とくにusers/adapter.pyを以下のように追加してカスタムユーザーモデルを追加できるようにする
+
+```python
+# users/adapter.py
+
+from allauth.account.adapter import DefaultAccountAdapter
+
+
+class AccountAdapter(DefaultAccountAdapter):
+
+    def save_user(self, request, user, form, commit=True):
+        user = super(AccountAdapter, self).save_user(request, user, form, commit=False)
+        user.age = form.cleaned_data.get('get')
+        user.weight = form.cleaned_data.get('weight')
+        user.save()
+```
+
+これに合わせてforms.pyを更新する
+
+```python
+# users/forms.py
+
+"""
+usernameを追加せずにemailとpasswordだけの認証にしたいが、それはdjango-allauthの設定で行う。
+"""
+
+from django.contrib.auth import get_user_model
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from allauth.account.forms import SignupForm
+from allauth.account.adapter import DefaultAccountAdapter
+from django import forms
+
+
+class CustomUserCreationForm(UserCreationForm):
+
+    class Meta:
+        model = get_user_model()  # AUTH_USER_MODEL config in settings.py
+        fields = ('email', 'username')  # password is default
+
+
+class CustomUserChangeForm(UserChangeForm):
+
+    class Meta:
+        model = get_user_model()  # AUTH_USER_MODEL config in settings.py
+        fields = ('email', 'username')  # password is default
+
+
+class CustomSignupForm(SignupForm):
+    age = forms.IntegerField()
+    weight = forms.IntegerField()
+
+    class Meta:
+        model = get_user_model()
+
+    def signup(self, request, user):
+        user.age = self.cleaned_data['age']
+        user.weight = self.cleaned_data['weight']
+        user.save()
+        return user
+```
+
+emailによる認証機能を追加していく。django-allauthのEmail設定機能をカスタマイズするために
+テンプレートを見つける必要があり、それらを上書きする形で利用する。
+これらには二つのファイルがあり、account/email下に設置する。
+
+```sh
+mkdir templates/account/email
+type nul > templates/account/email/email_confirmation_subject.txt
+type nul > templates/account/email/email_confirmation_message.txt
+```
+
+django-allauthが持つSubjectラインのデフォルトは次のようになる。
+
+```txt
+# templates/account/email/email_confirmation_subject.txt
+{% load i18n %}  # 他言語への対応
+{% autoescape off %}
+{% blocktrans %}Please Confirm Your E-mail Address {% endblocktrans %}
+{% endautoescape %}
+```
+
+このtransブロックの中身を変更していく。こんな風にしてみる。
+
+
+```txt
+# templates/account/email/email_confirmation_subject.txt
+{% load i18n %}  # 他言語への対応
+{% autoescape off %}
+{% blocktrans %}Confirm Your SignUp! {% endblocktrans %}
+{% endautoescape %}
+```
+
+続いてmessageの方を変更する。
+
+
+```txt
+# templates/account/email/email_confirmation_messaage.txt
+{% load account %}{% user_display user as user_display %}{% load i18n %}
+{% autoescape off %}{% blocktrans with site_name=current_site.name site_domain=surrent_site.domain %}Hello from {{ site_name }}!
+
+You're receiving this e-mail becouse user {{ user_display }} has given yours\
+as an email address to connect their account.
+
+To confirm this is correct, go to {{ active_url }}
+{% endblocktrans %}{% endautoescape %}
+{% block trans with site_name=current_site.name site_domain=current_site.domain %}Thank you from {{site_name}} !
+
+{{  site_domain }}{% endblocktrans %}
+
+```
+
+{{ site_domain }}や{{ site_name }}はadmin画面のsiteの内容を利用している。
+adminからドメイン名と表示名を下記のように変更する。
+
+- ドメイン名: example.com ⇒ animal_cf.com
+- 表示名: animal_cf.com
+
+最後にDEFAULT_FROM_EMAILを変更する。
+
+```python
+# config/settings.py
+DEFAULT_FROM_EMAIL = 'admin@animal_cf.com'
+```
+
+メール確認画面を作成する。
+
+```sh
+cd templates/account
+type nul > email_confirm.html
+```
+
+メールアドレスを登録  
+⇒アカウント登録  
+⇒認証メールで確認  
+⇒認証完了  
+⇒ログイン完了
+
+確認画面をaccount/email_confirm.htmlとして作成する。
+
+```html
+<!-- templates/account/email_confirm.html -->
+
+{% extends 'base.html' %}
+
+{% load i18n %}
+{% load account %}
+
+{% block head_title %}{% trans "Confirm E-mail Address" %}{% endblock %}
+
+
+{% block content %}
+<h1>{% trans "Confirm E-mail Address" %}</h1>
+
+{% if confirmation %}
+
+{% user_display confirmation.email_address.user as user_display %}
+
+<p>{% blocktrans with confirmation.email_address.email as email %}Please confirm
+that <a href="mailto:{{ email }}">{{ email }}</a> is an e-mail address for user
+{{ user_display }}.{% endblocktrans %}</p>
+
+<form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
+{% csrf_token %}
+  <button class="btn btn-primary" type="submit">{% trans 'Confirm' %}</button>
+</form>
+
+{% else %}
+
+{% url 'account_email' as email_url %}
+
+<p>{% blocktrans %}This e-mail confirmation link expired or is invalid. Please
+<a href="{{ email_url }}">issue a new e-mail confirmation request</a>.
+{% endblocktrans %}</p>
+
+{% endif %}
+
+{% endblock %}
+```
+
+パスワードのリセットやパスワードの変更についてはdjango-allauthを確認して
+追加実装していく予定。
 
 ### 3. 画像分類アプリの作成
