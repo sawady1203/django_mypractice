@@ -781,3 +781,6 @@ that <a href="mailto:{{ email }}">{{ email }}</a> is an e-mail address for user
 追加実装していく予定。
 
 ### 3. 画像分類アプリの作成
+
+ここから肝心の動物の画像分類アプリを作成していく。
+

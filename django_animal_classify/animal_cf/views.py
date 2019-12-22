@@ -1,12 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, reverse
 from django.contrib.auth.decorators import login_required  # 追加
-# Create your views here.
+from django.conf import settings as settings
 
 
 @login_required
 def index(request):
     if request.method == 'GET':
-        msg = 'This is animal classification page.'
+        msg = '動物の画像を洗濯してください'
         params = {
             'msg': msg
         }
