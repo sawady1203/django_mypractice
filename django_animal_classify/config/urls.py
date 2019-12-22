@@ -15,6 +15,8 @@ Including another URLconf
 """
 # config/urls.py
 
+from django.conf import settings  # 追加
+from djagno.conf.urls.static import static  # 追加
 from django.contrib import admin
 from django.urls import path, include
 
@@ -24,4 +26,4 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),  # 追加
     # apps
     path('', include('animal_cf.urls')),  # 追加
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # 追加

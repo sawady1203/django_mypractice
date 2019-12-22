@@ -142,8 +142,10 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # 追加
 # 本番環境で静的ファイルを参照する先
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # 追加
 
-# メディアファイルpath
+# 画像のファイルURL
 MEDIA_URL = '/media/'
+# 画像へのパス
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # 追加
 
 ##################
 # Authentication #

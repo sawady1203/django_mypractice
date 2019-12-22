@@ -898,5 +898,59 @@ def index(request):
 
 開発用サーバで確認したら感じになった。
 
-画像をpostした場合の処理を書いていく。
+画像をpostした場合の処理を書いていく。まずは画像投稿の基本形を考える。
 
+**1. settings.pyの編集**
+**2. postされた画像を受け取る。**
+**3. postされた画像を保存する。**
+**4. 保存された画像をテンプレートに埋め込む。**
+**5. 画面で投稿された画像が確認できる。**
+
+
+### 1. settings.pyの編集
+画像の保存先とtempleteの参照先をsettings.pyに記述する。
+- MEDIA_ROOT : ユーザーがアップロードした画像へのパス
+- MEDIT_URL : テンプレート内で使用できる画像へのURL
+
+```py
+# config/settings.py
+
+# 画像のファイルURL
+MEDIA_URL = '/media/'
+# 画像へのパス
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # 追加
+```
+
+mediaディレクトリを作成する。
+
+```sh
+mkdir media
+cd media
+mkdir animal_images
+cd ../
+```
+
+urls.pyの編集。アップロードされたmediaファイルへのURLを取得するため。
+
+```python
+# config/urls.py
+
+from django.conf import settings  # 追加
+from djagno.conf.urls.static import static  # 追加
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    # User management
+    path('accounts/', include('allauth.urls')),  # 追加
+    # apps
+    path('', include('animal_cf.urls')),  # 追加
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)  # 追加
+
+```
+
+### 2. postされた画像を受け取る。
+### 3. postされた画像を保存する。
+### 4. 保存された画像をテンプレートに埋め込む。
+### 5. 画面で投稿された画像が確認できる。
