@@ -824,3 +824,77 @@ python manage.py makemigrations animal_cf
 python manage.py migrate
 ```
 
+modelを作成したので、formを作成する。
+
+```python
+# animal_cf/forms.py
+
+from django import forms
+from .models import AnimalImage
+
+
+class AnimalImageForm(forms.ModelForm):
+
+    class Meta:
+        model = AnimalImage
+        fields = ('animal_image', )
+
+```
+
+forms.pyを作成したので、テンプレートにformを返してみる。
+
+```python
+# animal_cf/views.py
+
+from django.shortcuts import render, redirect, reverse
+from django.contrib.auth.decorators import login_required  # 追加
+from django.conf import settings as settings
+from .models import AnimalImage
+from .forms import AnimalImageForm
+
+
+@login_required
+def index(request):
+    if request.method == 'GET':
+        msg = '動物の画像を洗濯してください'
+        form = AnimalImageForm
+        params = {
+            'msg': msg,
+            'form': form,
+        }
+        return render(request, 'animal_cf/index.html', params)
+```
+
+テンプレート側に画像投稿のformを作成する。
+
+```html
+<!-- templates/animal_cf/index.html -->
+
+{% extends "base.html" %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+  animal classification
+{% endblock title %}
+
+{% block content %}
+  {% if user.is_authenticated %}
+    <p>Hi {{ user.username }}!</p>
+    <h1>{{ msg }}</h1>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn btn-primary" type="submit" >投稿</button>
+    </form>
+  {% else %}
+    <p>You are not logged in</p>
+    <p><a href="{% url 'account_login' %}">ログイン</a></p>
+    <a href="{% url 'account_signup' %}">アカウント登録</a>
+  {% endif %}
+{% endblock content %}
+```
+
+開発用サーバで確認したら感じになった。
+

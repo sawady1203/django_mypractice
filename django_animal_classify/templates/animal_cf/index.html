@@ -3,6 +3,7 @@
 {% extends "base.html" %}
 
 {% load static %}
+{% load crispy_forms_tags %}
 
 {% block title %}
   animal classification
@@ -11,10 +12,15 @@
 {% block content %}
   {% if user.is_authenticated %}
     <p>Hi {{ user.username }}!</p>
+    <h1>{{ msg }}</h1>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button class="btn btn-primary" type="submit" >投稿</button>
+    </form>
   {% else %}
     <p>You are not logged in</p>
     <p><a href="{% url 'account_login' %}">ログイン</a></p>
     <a href="{% url 'account_signup' %}">アカウント登録</a>
   {% endif %}
-  <h1>{{ msg }}</h1>
 {% endblock content %}
