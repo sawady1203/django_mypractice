@@ -16,7 +16,7 @@ Including another URLconf
 # config/urls.py
 
 from django.conf import settings  # 追加
-from djagno.conf.urls.static import static  # 追加
+from django.conf.urls.static import static  # 追加
 from django.contrib import admin
 from django.urls import path, include
 

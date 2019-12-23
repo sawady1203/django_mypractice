@@ -11,16 +11,29 @@
 
 {% block content %}
   {% if user.is_authenticated %}
-    <p>Hi {{ user.username }}!</p>
-    <h1>{{ msg }}</h1>
-    <form method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button class="btn btn-primary" type="submit" >投稿</button>
-    </form>
+    <div class="">
+      <h1>{{ message }}</h1>
+      {% if image_url %}
+        <h2>{{ answer_message }}...{{ estimate_result }}</h2>
+        <img src="{{ image_url }}" alt="サムネイル画像" class="img-thumbnail"></br>
+        <a href="{% url 'animal_cf:index' %}">トップへ戻る</a>
+      {% else %}
+      <div class="">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button class="btn btn-primary" type="submit" >投稿</button>
+        </form>
+      </div>
+      {% endif %}
+    </div>
   {% else %}
     <p>You are not logged in</p>
     <p><a href="{% url 'account_login' %}">ログイン</a></p>
     <a href="{% url 'account_signup' %}">アカウント登録</a>
   {% endif %}
 {% endblock content %}
+
+{% block js_content %}
+  <script src="{% static 'js/auto_load.js' %}"></script>
+{% endblock js_content %}
