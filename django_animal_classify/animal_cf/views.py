@@ -1,5 +1,7 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, HttpResponse
 from django.contrib.auth.decorators import login_required  # 追加
+from django.views.decorators.http import require_POST
+from django.http.response import JsonResponse
 from django.conf import settings as settings
 from .models import AnimalImage
 from .forms import AnimalImageForm
@@ -54,21 +56,56 @@ def index(request):
             posted_img = AnimalImage.objects.order_by('-id')[0]
             posted_img_path = posted_img.animal_image.path
             image_url = posted_img.animal_image.url
-            # 画像の変更
-            img = imread(posted_img_path)
-            img = img_translate(img)
-            label_num = img_estimater(img, model)
-            print(label_num)
-            animal_name = animal_number_to_name(label_num)
+            # # 画像の変更
+            # img = imread(posted_img_path)
+            # img = img_translate(img)
+            # label_num = img_estimater(img, model)
+            # print(label_num)
+            # animal_name = animal_number_to_name(label_num)
 
             context = {
                 'message': '認識結果', 
-                'answer_message': 'この動物は',
+                # 'answer_message': 'この動物は',
                 'image_url': image_url, 
-                'estimate_result': animal_name,
+                # 'estimate_result': animal_name,
             }
 
             return render(request, 'animal_cf/index.html', context)
+
+
+@login_required
+@require_POST
+def animal_classify(request):
+    '''
+    画像をうけとってurlを返す。
+    Ajaxでの返答。
+    '''
+    print('aniaml_classify!')
+    return HttpResponse('ajax is done!')
+    # print(request.POST)
+    # form = AnimalImageForm(request.POST, request.FILES)
+    # if len(request.FILES) == 0:
+    #     # validation失敗
+    #     context = {
+    #         'message': 'ファイルが選択されていません。',
+    #         'form': AnimalImageForm
+    #         }
+    # elif form.is_valid() is False:
+    #     context = {
+    #         'message': 'ファイルに問題があります。',
+    #         'form': AnimalImageForm,
+    #         }
+    # else:
+    #     form.save()  # 画像の保存
+    #     post_img = AnimalImage.obects.order_by('-id')[0]  # 一番新しい画像
+    #     post_img_path = post_img.animal_image.path
+    #     image_url = post_img.animal_image.url
+
+    #     context = {
+    #         'post_img_path': post_img_path,
+    #         'image_url': image_url
+    #     }
+    # return JsonResponse(context, safe=False)
 
 
 # WindowsでOpenCVを使う場合、ファイルパスに日本語が入っているとうまくいかない
