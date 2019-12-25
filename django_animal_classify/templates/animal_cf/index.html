@@ -16,16 +16,13 @@
       {% if image_url %}
         <h2>{{ answer_message }}...{{ estimate_result }}</h2>
         <img src="{{ image_url }}" alt="サムネイル画像" class="img-thumbnail" id="animal_image"></br>
-        <a href="{% url 'animal_cf:index' %}">トップへ戻る</a>
+        <a class="m-2" href="{% url 'animal_cf:index' %}">トップへ戻る</a>
       {% else %}
       <div class="">
         <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
           {{ form.as_p }}
-          <button class="btn btn-primary" type="submit" >投稿</button>
-          <button class="btn btn-primary" id="animal_classify">
-            画像認識スタート
-          </button>
+          <button class="btn btn-primary" type="submit" >画像認識スタート</button>
         </form>
       </div>
       {% endif %}

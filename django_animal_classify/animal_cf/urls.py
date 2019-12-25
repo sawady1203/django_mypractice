@@ -7,5 +7,5 @@ app_name = 'animal_cf'
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('animal_cf/', views.animal_classify, name='animal_classify')
+    # path('animal_cf/', views.animal_classify, name='animal_classify')
 ]
