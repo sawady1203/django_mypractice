@@ -12,3 +12,6 @@ all-authを使用。
 
 ## 3. django_animal_classify
 DjangoとChainerを使った動物の分類アプリケーションを作成する。
+
+## 4. django-ajax
+DjangoでAjaxを使ってみる簡単なプロジェクト。

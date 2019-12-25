@@ -108,6 +108,7 @@ env/
 venv/
 venv_user_auth/
 venv-animal/
+venv-ajax/
 ENV/
 env.bak/
 venv.bak/
