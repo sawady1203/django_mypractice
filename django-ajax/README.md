@@ -160,3 +160,237 @@ migrateができたのでcommitする。
 git add .
 git commit -m "first commit"
 ```
+
+mainアプリケーションを作成する
+
+```sh
+python manage.py startapp main
+type nul > main/urls.py
+type nul > main/forms.py
+```
+
+URLconfを編集してmain/urls.pyへの分岐を作成する。
+
+```python
+# config/urls.py
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('main.urls')),
+]
+```
+
+mainアプリのurls.pyを作成する。
+
+```python
+# main/urls.py
+from django.urls import path, include
+from . import views
+
+app_name = 'main'
+
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('ajax_get/', views.ajax_get, name="ajax_get"),
+    path('ajax_post/', views.ajax_post, name="ajax_post"),
+]
+```
+
+mainアプリのviewsを記述していく。
+
+```python
+# main/views.py
+
+from django.shortcuts import render, HttpResponse
+import json
+# Create your views here.
+
+
+def index(request):
+    # if request.method == 'GET':
+    return render(request, 'main/index.html', {})
+
+
+def ajax_get(request):
+    if request.method == 'GET':
+        print('request to ajax_get')
+        return HttpResponse('ajax_get is done')
+
+
+def ajax_post(request):
+    if request.method == 'POST':
+        print('request to ajax_post')
+        data = request.body
+        data = json.loads(data)
+        print(data)
+        return HttpResponse('ajax is done in POST!')
+
+```
+
+templatesを作成していく。
+
+```sh
+type nul > templates/base.html
+mkdir templates/main
+type nul > templates/main/index.html
+```
+
+```html
+<!-- templates/base.html -->
+
+{% load static %}
+
+<!DOCTYPE html>
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>{% block title %}{% endblock title %}</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <a class="navbar-brand" href="{% url 'main:index' %}">Ajax Test Page</a>
+        </nav>
+        <br>
+        <div class="container">
+            {% block content %}
+            {% endblock content %}
+        </div>
+        <script src="{% static 'js/common.js' %}"></script>
+            {% block javascripts %}
+            {% endblock javascripts %}
+    </body>
+</html>
+```
+
+base.htmlをextendsした表示画面をindex.htmlとして作成する。
+
+```html
+<!-- templates/main/index.html -->
+
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}
+Index
+{% endblock title %}
+
+{% block content %}
+
+<form method='GET'>
+<h1>This is index page.</h1>
+
+<p id="result"></p>
+
+<button type="submit" id="submit_in_get">Submit In Get</button>
+</form>
+
+<form method='POST'>
+{% csrf_token %}
+<button type="submit" id="submit_in_post">Submit In Post</button>
+</form>
+
+{% endblock content %}
+
+{% block javascripts %}
+<script src="{% static 'js/django_ajax.js' %}"></script>
+{% endblock javascripts %}
+
+```
+
+ここで開発用サーバで確認する。
+
+```sh
+python manage.py runserver
+```
+
+ajax用のjavascriptを作成する。
+
+ajaxでPOSTをする場合はcookieからcsrftokenを取得する必要がある。
+この関数をcommon.jsとして作成する。
+
+```javascript
+// common.js
+// -- using pure javascript -- //
+function parse_cookies() {
+    var cookies = {};
+    if (document.cookie && document.cookie !== '') {
+        document.cookie.split(';').forEach(function (c) {
+            var m = c.trim().match(/(\w+)=(.*)/);
+            if(m !== undefined) {
+                cookies[m[1]] = decodeURIComponent(m[2]);
+            }
+        });
+    }
+    return cookies;
+}
+```
+
+index.htmlに適用するjavascriptをdjango_ajax.jsとして作成する。
+今回は素のjavascriptでajaxを実装した。
+参考URL：https://qiita.com/soup01/items/f356d6ee09534007f76d
+
+```javascript
+// django_ajax.js
+
+console.log('django_ajax.js is start')
+var cookies = parse_cookies();
+console.log(cookies);
+var result = document.getElementById('result');
+
+
+function submit_in_post() {
+    var xhr = new XMLHttpRequest();
+    var data = {'user':'index'};
+    var json = JSON.stringify(data);
+    console.log(json);
+    xhr.open('POST', 'ajax_post/');
+    xhr.setRequestHeader('X-CSRFToken', cookies['csrftoken']);
+    xhr.setRequestHeader('Content-Type', 'application/json')
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4){
+            if (xhr.status === 200){
+                console.log(post_result);
+            }else{
+                console.log(xhr.status);
+                console.log('submit_in_get is failed...');
+            }
+        }else{
+            console.log('通信中...');
+        };
+    };
+    xhr.send(json);
+};
+
+document.getElementById('submit_in_get').addEventListener('click', function(){
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'ajax_get/');
+    xhr.onload = function () {
+        if (xhr.readyState === 4){
+            if (xhr.status === 200){
+                console.log(xhr.responseText);
+            }else{
+                console.log(xhr.status);
+                console.log('submit_in_get is failed...');
+            }
+        };
+    }
+    xhr.send(null);
+    result.textContent = "get!";
+}, false);
+
+document.getElementById('submit_in_post').addEventListener('click',function () {
+    result_txt = submit_in_post();
+    result.textContent = "clicked...";
+});
+
+console.log(result);
+
+```
+
+開発用サーバで確認すると、確かにpostとgetをajaxで送信できているのがわかる。
