@@ -208,15 +208,15 @@ git commit - m "start animal classification django-project"
 ログイン機能はdjango-allauthとカスタムユーザーを使用する。
 カスタムユーザーモデルを使った認証は次のステップを踏む。
 
-2.1. `users`アプリを作成
-2.2 `CustomUser`モデルを作成
-2.3 `settings.py`を更新
-2.4 `UserCreationForm`と`UserChangeForm`をカスタマイズ
-2.5 `admin.py`にカスタムユーザーモデルを追加する。
-2.6 マイグレーションとsuperuser
-2.8 django-allauthの設定
-2.7 テンプレートの作成
-2.9 django-allauthでEmail-Onlyログイン化
+2.1 `users`アプリを作成  
+2.2 `CustomUser`モデルを作成  
+2.3 `settings.py`を更新  
+2.4 `UserCreationForm`と`UserChangeForm`をカスタマイズ  
+2.5 `admin.py`にカスタムユーザーモデルを追加する。  
+2.6 マイグレーションとsuperuser  
+2.8 django-allauthの設定  
+2.7 テンプレートの作成  
+2.9 django-allauthでEmail-Onlyログイン化  
 
 #### 2.1. `users`アプリを作成
 
