@@ -15,3 +15,7 @@ DjangoとChainerを使った動物の分類アプリケーションを作成す�
 
 ## 4. django-ajax
 DjangoでAjaxを使ってみる簡単なプロジェクト。
+
+## 5. django-vue-project
+Django-Rest-frameworkとVue.jsを使った簡単なプロジェクト。
+

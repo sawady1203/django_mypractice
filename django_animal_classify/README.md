@@ -5,7 +5,6 @@
 - カスタムユーザーでのユーザー認証機能
 - 画像投稿機能
 - Chainerでの画像分類機能(後にPytorch化を予定)
-- Ajaxで分類結果表示を目指す。
 
 ## Procedure
 
@@ -951,6 +950,57 @@ urlpatterns = [
 ```
 
 ### 2. postされた画像を受け取る。
+
+animal_cf/urls.pyを作成して分岐を作成する。
+
+```python
+# animal_cf/urls.py
+
+from django.urls import path
+from . import views
+
+app_name = 'animal_cf'
+
+urlpatterns = [
+    path('', views.index, name='index'),
+]
+
+```
+
+animal_cf/views.pyにindex関数を作成する。
+
+```python
+# animal_cf/views.py
+
+from django.shortcuts import render, redirect, reverse, HttpResponse
+from django.contrib.auth.decorators import login_required  # 追加
+from django.views.decorators.http import require_POST
+from .models import AnimalImage
+from .forms import AnimalImageForm
+import numpy as np
+
+
+@login_required
+def index(request):
+    if request.method == 'GET':
+        msg = '動物の画像を選択してください'
+        form = AnimalImageForm
+        params = {
+            'message': msg,
+            'form': form,
+        }
+        return render(request, 'animal_cf/index.html', params)
+```
+
+animal_cf/models.pyに動物の
+
+```python
+
+```
+
+
 ### 3. postされた画像を保存する。
+
+
 ### 4. 保存された画像をテンプレートに埋め込む。
 ### 5. 画面で投稿された画像が確認できる。
