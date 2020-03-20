@@ -18,4 +18,3 @@ DjangoでAjaxを使ってみる簡単なプロジェクト。
 
 ## 5. django-vue-project
 Django-Rest-frameworkとVue.jsを使った簡単なプロジェクト。
-
