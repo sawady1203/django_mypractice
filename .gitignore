@@ -109,6 +109,7 @@ venv/
 venv_user_auth/
 venv-animal/
 venv-ajax/
+venv-channels/
 ENV/
 env.bak/
 venv.bak/
@@ -130,3 +131,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+.vscode/
