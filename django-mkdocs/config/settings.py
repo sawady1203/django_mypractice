@@ -14,6 +14,7 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_NAME = os.path.basename(BASE_DIR)
 
 
 # Quick-start development settings - unsuitable for production
@@ -24,6 +25,7 @@ SECRET_KEY = 'n!35b0gsekwdr9q-my!#s+8y3s-6-g0=sr!m5=io$*%tmj2q$5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+# DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -37,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'docs.apps.DocsConfig',
 ]
 
 MIDDLEWARE = [
@@ -54,7 +57,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -118,3 +121,23 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+#######################
+# mkdocs configration #
+#######################
+
+import yaml
+
+MKDOCS_CONFIG = os.path.join(BASE_DIR, 'mkdocs.yml')
+DOCS_DIR = ''
+DOCS_STATIC_NAMESPACE = ''
+
+with open(MKDOCS_CONFIG, 'r') as f:
+    DOCS_DIR = yaml.load(f, Loader=yaml.Loader)['site_dir']
+    DOCS_STATIC_NAMESPACE = os.path.basename(DOCS_DIR)
+
+#######################
+# User Authentication #
+#######################
+
+LOGIN_REDIRECT_URL = '/docs/'  # 追加
