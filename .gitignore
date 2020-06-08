@@ -110,6 +110,7 @@ venv_user_auth/
 venv-animal/
 venv-ajax/
 venv-channels/
+venv-mkdocs/
 ENV/
 env.bak/
 venv.bak/

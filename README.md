@@ -32,3 +32,7 @@ DjangoでWebSocketを行うためのchannelsのチュートリアルを実施す
 ## 7.django-react
 
 Django内でReactを使ってみるためのチュートリアル。
+
+## 8. django-mkdocs
+
+Django内でmkdocsを使ってドキュメントの配信を行う。
