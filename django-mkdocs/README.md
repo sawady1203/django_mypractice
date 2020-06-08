@@ -293,7 +293,7 @@ import os
 
 from django.conf import settings
 
-from django.contrib.auth.decorators import login_required # 追加
+from django.contrib.auth.decorators import login_required  # 追加
 from django.contrib.staticfiles.views import serve
 
 
@@ -308,10 +308,73 @@ def serve_docs(request, path):
     # /docs/<path>/index.html　はそのまま返す
     path = os.path.join(settings.DOCS_STATIC_NAMESPACE, path)
 
-    return serve(request, path)
+    return serve(request, path, insecure=True)
 ```
 
-標準USERモデルでユーザー認証機能を追加します。
+標準のUSERモデルでユーザー認証機能を追加します。
 
 ## User authentication
 
+``` Python
+# config/settings.py
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),  # 追加
+    path('docs/', include('docs.urls')),
+]
+
+```
+
+`templates/registration`を作成して`login.html`を追加します。
+
+```sh
+(venv-mkdocks)$ mkdir templates
+(venv-mkdocks)$ cd templates
+
+# base.htmlの作成
+(venv-mkdocks)\templates>$ type nul > base.html
+(venv-mkdocks)\templates>$ mkdir registration
+
+# login.htmlの作成
+(venv-mkdocks)\templates>$ type nul > registration/login.html
+```
+
+これで`docs/`にアクセスするとログイン画面が立ち上がり、ログイン後にドキュメントが閲覧できるようになりました。
+
+※ユーザー認証はカスタムユーザーモデルで作成した方がいいです。
+
+マイグレーションします。
+
+```sh
+(venv-mkdocks)$ python manage.py migrate
+(venv-mkdocks)$ python manage.py runserver
+```
+
+## 注意
+
+デプロイ時に静的ファイルを集約するとmkdocs内の静的ファイルも収集されてしまい、ユーザー認証機能を追加した意味が無くなってしまいます。
+静的ファイルを集約する際は`mkdocs_build`除くようにする必要がある。
+
+静的ファイルの設定を`config/settings.py`に追加します。
+
+``` Python
+# config/settings.py
+
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_ROOT = os.path.join(BASE_DIR, "static_root")
+```
+
+開発時は各アプリケーションの`static`フォルダ内を参照し、デプロイ時は静的ファイルを集約した`static_root`内を参照するようになります。
+
+```sh
+# mkdocs_buildを除いて静的ファイルを集約する
+(venv-mkdocks)$ python manage.py collectstatic -i mkdocs_build
+130 static files copied to 'D:\~~\django-mkdocs\static_root'.
+```
+
+仮に`mkdocs_build`を一緒に集約してしまった場合は、`static_root/mkdocs_build`を
+削除しておきましょう。
