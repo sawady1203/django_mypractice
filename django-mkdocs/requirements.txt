@@ -12,7 +12,7 @@ MarkupSafe==1.1.1
 mkdocs==1.1.2
 nltk==3.5
 pytz==2020.1
-PyYAML==5.3.1
+PyYAML==5.4
 regex==2020.6.8
 six==1.15.0
 sqlparse==0.3.1
