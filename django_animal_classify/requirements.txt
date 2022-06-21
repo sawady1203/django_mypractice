@@ -11,7 +11,7 @@ filelock==3.0.12
 flake8==3.7.9
 idna==2.8
 mccabe==0.6.1
-numpy==1.18.0
+numpy==1.22.0
 oauthlib==3.1.0
 opencv-python==4.1.2.30
 Pillow==6.2.1
